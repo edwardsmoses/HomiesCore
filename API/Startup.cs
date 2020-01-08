@@ -16,6 +16,8 @@ using Microsoft.Extensions.Logging;
 using MediatR;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using FluentValidation.AspNetCore;
+using API.Middleware;
 
 namespace API
 {
@@ -48,18 +50,22 @@ namespace API
             //inject the MediatR for API Controller
             services.AddMediatR(typeof(List.Handler).Assembly);
 
-            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
-
-
+            services.AddControllers()
+                .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null)
+                .AddFluentValidation(m => m.RegisterValidatorsFromAssemblyContaining<Create>());
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            app.UseMiddleware<ErrorHandleMiddleware>();
+
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+
             }
 
             //app.UseHttpsRedirection();
@@ -68,6 +74,8 @@ namespace API
 
             app.UseRouting();
             app.UseCors("CorsPolicy");
+
+
 
 
             app.UseAuthorization();

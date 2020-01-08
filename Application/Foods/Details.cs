@@ -1,6 +1,8 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using DataPersist;
 using Domain;
 using MediatR;
@@ -27,6 +29,11 @@ namespace Application.Foods
             public async Task<Domain.API.FoodApiModel> Handle(Query request, CancellationToken cancellationToken)
             {
                 var Meal = await context.Foods.FindAsync(request.Id);
+
+                if (Meal == null)
+                    throw new RestException(HttpStatusCode.NotFound, new { food = "This meal couldn't be found" });
+
+
                 return Domain.API.FoodApiModel.MapSingleFoodToApiModel(Meal);
             }
         }

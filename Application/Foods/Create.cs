@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataPersist;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,17 @@ namespace Application.Foods
             public string Price { get; set; }
 
             public string CategoryName { get; set; }
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(m => m.Name).NotEmpty();
+                RuleFor(m => m.Description).NotEmpty();
+                RuleFor(m => m.Price).NotEmpty();
+                RuleFor(m => m.CategoryName).NotEmpty();
+            }
         }
 
         public class Handler : IRequestHandler<Command>

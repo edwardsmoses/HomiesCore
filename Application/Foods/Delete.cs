@@ -1,6 +1,8 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using DataPersist;
 using MediatR;
 
@@ -28,7 +30,7 @@ namespace Application.Foods
                 //handler logic goes here
                 var food = await context.Foods.FindAsync(request.Id);
                 if (food == null)
-                    throw new Exception("Activity couldn't be found");
+                    throw new RestException(HttpStatusCode.NotFound, new { food = "This meal couldn't be found" });
 
                 context.Foods.Remove(food);
 
