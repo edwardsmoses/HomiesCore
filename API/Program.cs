@@ -25,11 +25,8 @@ namespace API
 
                 try
                 {
-                    //var context = services.GetRequiredService<DataContext>();
-                    //context.Database.Migrate();
-
-                    //seed the Data from Activities
-                    //Seed.SeedData(context);
+                    var context = services.GetRequiredService<DataContext>();
+                    context.Database.Migrate();
 
                 }
                 catch (Exception ex)
