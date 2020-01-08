@@ -41,7 +41,7 @@ namespace Domain.API
         {
             get
             {
-                return $"https://localhost:44355//Content/uploads//{PictureUrl}";
+                return $"http://localhost:62127//Content/uploads//{PictureUrl}";
             }
         }
 
@@ -55,15 +55,15 @@ namespace Domain.API
 
             var foodApiModel = new FoodApiModel()
             {
-                CategoryName = foodDbModel.Category.Name,
+                CategoryName = foodDbModel.CategoryName,
                 Currency = foodDbModel.Currency.ToString(),
                 Description = foodDbModel.Description,
                 Id = foodDbModel.Id,
                 Name = foodDbModel.Name,
                 Price = foodDbModel.Price,
-                Pictures = foodDbModel.Pictures.Select(m => m.FileName).ToList()
+                Pictures = foodDbModel.Pictures != null ? foodDbModel.Pictures.Select(m => m.FileName).ToList() : new List<string>()
             };
-            if (foodDbModel.Pictures.Any())
+            if (foodDbModel == null && foodDbModel.Pictures.Any())
                 foodApiModel.PictureUrl = foodDbModel.Pictures.FirstOrDefault().FileName;
             else
                 foodApiModel.PictureUrl = "defaultFood.jpg";

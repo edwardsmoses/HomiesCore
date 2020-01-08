@@ -10,12 +10,12 @@ namespace Application.Foods
 {
     public class Details
     {
-        public class Query : IRequest<Food>
+        public class Query : IRequest<Domain.API.FoodApiModel>
         {
             public Guid Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Food>
+        public class Handler : IRequestHandler<Query, Domain.API.FoodApiModel>
         {
             private readonly DataContext context;
 
@@ -24,10 +24,10 @@ namespace Application.Foods
                 this.context = context;
             }
 
-            public async Task<Food> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Domain.API.FoodApiModel> Handle(Query request, CancellationToken cancellationToken)
             {
-                var Activity = await context.Foods.FindAsync(request.Id);
-                return Activity;
+                var Meal = await context.Foods.FindAsync(request.Id);
+                return Domain.API.FoodApiModel.MapSingleFoodToApiModel(Meal);
             }
         }
     }

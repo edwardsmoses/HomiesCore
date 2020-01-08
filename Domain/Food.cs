@@ -34,7 +34,9 @@ namespace Domain
 
         public Currency Currency { get; set; }
 
-        public Guid CategoryId { get; set; }
+        public string CategoryName { get; set; }
+
+        public Guid? CategoryId { get; set; }
 
         public virtual Category Category { get; set; }
 

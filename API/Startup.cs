@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace API
 {
@@ -46,7 +48,10 @@ namespace API
             //inject the MediatR for API Controller
             services.AddMediatR(typeof(List.Handler).Assembly);
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +63,8 @@ namespace API
             }
 
             //app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
 
             app.UseRouting();
             app.UseCors("CorsPolicy");

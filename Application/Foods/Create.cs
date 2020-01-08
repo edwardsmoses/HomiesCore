@@ -18,7 +18,7 @@ namespace Application.Foods
 
             public string Description { get; set; }
 
-            public decimal Price { get; set; }
+            public string Price { get; set; }
 
             public string CategoryName { get; set; }
         }
@@ -32,36 +32,17 @@ namespace Application.Foods
                 this.context = context;
             }
 
-            public async Task<Category> GetCategoryAsync(string categoryName)
-            {
-                var category = await context.Categories.FirstOrDefaultAsync(m => m.Name.Equals(categoryName,
-                    StringComparison.InvariantCultureIgnoreCase));
-
-                if (category == null)
-                {
-                    category = new Category()
-                    {
-                        Name = categoryName,
-                    };
-                    context.Categories.Add(category);
-                    await context.SaveChangesAsync();
-                };
-
-                return category;
-            }
-
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var category = await GetCategoryAsync(request.CategoryName);
-
                 var food = new Food()
                 {
-                    CategoryId = category.Id,
+                    Id = request.Id,
+                    CategoryName = request.CategoryName,
                     IsMealOfTheDay = false,
                     Description = request.Description,
                     Name = request.Name,
-                    Price = request.Price,
+                    Price = Convert.ToDecimal(request.Price),
                     Currency = Currency.Naira,
                     CanFoodShowOnApp = true //remove this later, and only show the food when the Admin is ready to show it
                 };

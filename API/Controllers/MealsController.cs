@@ -25,7 +25,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Food>> Details(Guid id)
+        public async Task<ActionResult<Domain.API.FoodApiModel>> Details(Guid id)
         {
             return await mediator.Send(new Details.Query()
             {
