@@ -33,8 +33,8 @@ namespace Application.Foods
                 if (Meal == null)
                     throw new RestException(HttpStatusCode.NotFound, new { food = "This meal couldn't be found" });
 
-
-                return Domain.API.FoodApiModel.MapSingleFoodToApiModel(Meal);
+                var foodMapper = new Mappers.FoodApiMapper(this.context);
+                return await foodMapper.MapFoodToApiModel(Meal);
             }
         }
     }

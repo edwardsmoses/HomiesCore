@@ -6,7 +6,7 @@ using Application.Errors;
 using DataPersist;
 using MediatR;
 
-namespace Application.Foods
+namespace Application.FoodCategory
 
 {
     public class Delete
@@ -28,17 +28,17 @@ namespace Application.Foods
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
                 //handler logic goes here
-                var food = await context.Foods.FindAsync(request.Id);
-                if (food == null)
-                    throw new RestException(HttpStatusCode.NotFound, new { food = "This meal couldn't be found" });
+                var foodCategory = await context.Categories.FindAsync(request.Id);
+                if (foodCategory == null)
+                    throw new RestException(HttpStatusCode.NotFound, new { food = "This Food Category couldn't be found" });
 
-                context.Foods.Remove(food);
+                context.Categories.Remove(foodCategory);
 
                 var success = await context.SaveChangesAsync() > 0;
 
                 if (success) return Unit.Value;
 
-                throw new Exception("Problem saving Foods");
+                throw new Exception("Problem saving Category");
             }
         }
 

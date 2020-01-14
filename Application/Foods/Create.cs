@@ -21,7 +21,7 @@ namespace Application.Foods
 
             public string Price { get; set; }
 
-            public string CategoryName { get; set; }
+            public string CategoryId { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -31,7 +31,7 @@ namespace Application.Foods
                 RuleFor(m => m.Name).NotEmpty();
                 RuleFor(m => m.Description).NotEmpty();
                 RuleFor(m => m.Price).NotEmpty();
-                RuleFor(m => m.CategoryName).NotEmpty();
+                RuleFor(m => m.CategoryId).NotEmpty();
             }
         }
 
@@ -50,14 +50,20 @@ namespace Application.Foods
                 var food = new Food()
                 {
                     Id = request.Id,
-                    CategoryName = request.CategoryName,
                     IsMealOfTheDay = false,
                     Description = request.Description,
                     Name = request.Name,
                     Price = Convert.ToDecimal(request.Price),
                     Currency = Currency.Naira,
+                    CreatedOn = DateTime.Now,
                     CanFoodShowOnApp = true //remove this later, and only show the food when the Admin is ready to show it
                 };
+
+                var categoryDbModel = await context.Categories.FirstOrDefaultAsync(m => m.Id == Guid.Parse(request.CategoryId));
+                if (categoryDbModel != null)
+                    food.CategoryId = categoryDbModel.Id;
+                else
+                    food.CategoryName = request.CategoryId;
 
                 context.Foods.Add(food);
                 var success = await context.SaveChangesAsync() > 0;

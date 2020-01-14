@@ -6,6 +6,7 @@ using Application.Errors;
 using DataPersist;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Foods
 
@@ -17,11 +18,12 @@ namespace Application.Foods
             public Guid Id { get; set; }
             public string Name { get; set; }
 
+            public string CategoryId { get; set; }
+
             public string Description { get; set; }
 
-            public decimal Price { get; set; }
+            public string Price { get; set; }
 
-            public string CategoryName { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -31,7 +33,6 @@ namespace Application.Foods
                 RuleFor(m => m.Name).NotEmpty();
                 RuleFor(m => m.Description).NotEmpty();
                 RuleFor(m => m.Price).NotEmpty();
-                RuleFor(m => m.CategoryName).NotEmpty();
             }
         }
 
@@ -54,7 +55,16 @@ namespace Application.Foods
 
                 food.Name = request.Name ?? food.Name;
                 food.Description = request.Description ?? food.Description;
-                food.Price = request.Price;
+                food.Price = Convert.ToDecimal(request.Price);
+                food.ModifiedOn = DateTime.Now;
+
+
+                var categoryDbModel = await context.Categories.FirstOrDefaultAsync(m => m.Id == Guid.Parse(request.CategoryId));
+                if (categoryDbModel != null)
+                    food.CategoryId = categoryDbModel.Id;
+                else
+                    food.CategoryName = request.CategoryId;
+
 
 
                 var success = await context.SaveChangesAsync() > 0;

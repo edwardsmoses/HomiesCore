@@ -4,6 +4,12 @@ using System.Linq;
 
 namespace Domain.API
 {
+    public class CategoryApiModel
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+    }
     public class FoodApiModel
     {
 
@@ -46,29 +52,7 @@ namespace Domain.API
         }
 
         public List<string> Pictures { get; set; }
-
-
-        public static FoodApiModel MapSingleFoodToApiModel(Food foodDbModel)
-        {
-            if (foodDbModel == null)
-                return null;
-
-            var foodApiModel = new FoodApiModel()
-            {
-                CategoryName = foodDbModel.CategoryName,
-                Currency = foodDbModel.Currency.ToString(),
-                Description = foodDbModel.Description,
-                Id = foodDbModel.Id,
-                Name = foodDbModel.Name,
-                Price = foodDbModel.Price,
-                Pictures = foodDbModel.Pictures != null ? foodDbModel.Pictures.Select(m => m.FileName).ToList() : new List<string>()
-            };
-            if (foodDbModel == null && foodDbModel.Pictures.Any())
-                foodApiModel.PictureUrl = foodDbModel.Pictures.FirstOrDefault().FileName;
-            else
-                foodApiModel.PictureUrl = "defaultFood.jpg";
-
-            return foodApiModel;
-        }
+        public DateTime CreatedOn { get; set; }
+        public Guid CategoryId { get; set; }
     }
 }

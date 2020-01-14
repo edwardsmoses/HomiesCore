@@ -26,11 +26,14 @@ namespace Application.Foods
             {
                 var foods = await context.Foods.ToListAsync();
 
+                var foodMapper = new Mappers.FoodApiMapper(this.context);
+
                 var apiFoods = new List<FoodApiModel>();
-                foods.ForEach(m =>
+                foreach (var c in foods)
                 {
-                    apiFoods.Add(FoodApiModel.MapSingleFoodToApiModel(m));
-                });
+                    var apiModel = await foodMapper.MapFoodToApiModel(c);
+                    apiFoods.Add(apiModel);
+                }
 
                 return apiFoods;
             }
