@@ -1,11 +1,11 @@
-using System;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using Application.Errors;
 using DataPersist;
 using Domain;
 using MediatR;
+using System;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Application.FoodCategory
 

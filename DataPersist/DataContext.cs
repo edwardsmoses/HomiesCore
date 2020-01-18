@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace DataPersist
@@ -15,7 +16,7 @@ namespace DataPersist
         }
     }
 
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<Domain.AppUser>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -26,6 +27,10 @@ namespace DataPersist
         public DbSet<Domain.FoodPicture> FoodPictures { get; set; }
 
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
 
 
     }

@@ -1,23 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using API.Middleware;
 using Application.Foods;
+using Application.Interfaces;
 using DataPersist;
+using FluentValidation.AspNetCore;
+using Infrastructure.Security;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using MediatR;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using FluentValidation.AspNetCore;
-using API.Middleware;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API
 {
@@ -50,9 +49,30 @@ namespace API
             //inject the MediatR for API Controller
             services.AddMediatR(typeof(List.Handler).Assembly);
 
-            services.AddControllers()
-                .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null)
+            services.AddControllers(opt =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            }).AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null)
                 .AddFluentValidation(m => m.RegisterValidatorsFromAssemblyContaining<Create>());
+
+
+            services.AddIdentityCore<Domain.AppUser>().AddEntityFrameworkStores<DataContext>().AddSignInManager<SignInManager<Domain.AppUser>>();
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateAudience = false,
+                    ValidateIssuer = false
+                };
+            });
+
+            services.AddScoped<IJWTGenerator, JWTGenerator>();
+            services.AddScoped<IUserAccessor, UserAccessor>();
 
         }
 
@@ -73,9 +93,9 @@ namespace API
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseCors("CorsPolicy");
-
-
 
 
             app.UseAuthorization();

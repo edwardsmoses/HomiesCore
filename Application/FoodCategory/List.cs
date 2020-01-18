@@ -1,11 +1,10 @@
+using DataPersist;
+using Domain;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using DataPersist;
-using Domain;
-using Domain.API;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.FoodCategory
 
